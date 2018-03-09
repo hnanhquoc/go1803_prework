@@ -5,8 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"strconv"
-
-	"github.com/davecgh/go-spew/spew"
+	"time"
 )
 
 // Blockchain is our global blockchain.
@@ -20,24 +19,36 @@ type Block struct {
 	Hash      []byte
 }
 
+// Main function
+func main() {
+
+}
+
 // InitBlockchain creates our first Genesis node.
 func InitBlockchain() {
-	fmt.Println("******TODO: IMPLEMENT InitBlockchain!******")
-	spew.Dump(Blockchain)
-	// Fill me in, noble warrior.
+	genesisBlock := Block{"Genesis Block", time.Now().Unix(), []byte{}, []byte{}}
+	genesisBlock.Hash = genesisBlock.calculateHash()
+	Blockchain = []Block{genesisBlock}
 }
 
 // NewBlock creates a new Blockchain Block.
 func NewBlock(oldBlock Block, data string) Block {
-	fmt.Println("******TODO: IMPLEMENT NewBlock!******")
-	return Block{}
+	newBlock := Block{data, time.Now().Unix(), oldBlock.Hash, []byte{}}
+	newBlock.Hash = newBlock.calculateHash()
+	return newBlock
 }
 
 // AddBlock adds a new block to the Blockchain.
 func AddBlock(b Block) error {
-	fmt.Println("******TODO: IMPLEMENT AddBlock!******")
-	spew.Dump(Blockchain)
-	// Fill me in, brave wizard.
+	// Validate block
+	lastBlock := Blockchain[len(Blockchain)-1]
+	if bytes.Compare(lastBlock.Hash, b.PrevHash) != 0 {
+		return fmt.Errorf("Block is invalid. It should have PrevHash: %x, but has PrevHash: %x",
+			lastBlock.Hash, b.PrevHash)
+	}
+
+	Blockchain = append(Blockchain, b)
+
 	return nil
 }
 
